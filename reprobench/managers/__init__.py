@@ -2,6 +2,8 @@ import click
 
 from .local import LocalManager
 from .local import cli as local_cli
+from .condor import CondorManager
+from .condor import cli as condor_cli
 from .slurm import SlurmManager
 from .slurm import cli as slurm_cli
 from .sge import SgeManager

@@ -1,0 +1,165 @@
+title: MC2022_NESTHDB
+description: Improving nesthdb with AL and ML
+
+limits:
+#  time: 500 # s
+  time: 900 # PRO INSTANCE, 3600s==1h
+#  time: 43200 #12h, for SMAC
+  memory: 245000 # mb PRO INSTANCE, UP TO 250GB, little less to be sure
+  tmpdisk: 8048 # GB NOT ENFORCED
+  scheduler_memory: 32768 #mb NOT ENFORCED
+
+
+steps:
+  run:
+# move to step that runs once on a node, but not every time; there is no point in collecting the data every time
+    - module: reprobench.core.sysinfo.CollectSystemInfo4Server
+    - module: reprobench.core.setup.SetupKernel
+      config:
+#        transparent_hugepage: madvise
+        # see: https://www.kernel.org/doc/html/v4.12/admin-guide/pm/intel_pstate.html
+        governors: 2.8Ghz
+    # TODO: performance govenors / --cpu-freq srun
+    - module: reprobench.executors.RunSolverPerfEval
+    # provide non-perf runner
+    # provide configurable perf parameters
+#    - module: reprobench.executors.PsmonExecutor
+      config:
+        nonzero_rte: False
+
+observers:
+  - module: reprobench.core.sysinfo.SystemInfoObserver
+#  - module: reprobench.executors.RunStatisticObserver
+  - module: reprobench.executors.RunStatisticExtendedObserver
+
+#  analysis:
+#    - module: reprobench.statistics.tables.RunTable
+#      config:
+#        joins:
+#          - reprobench.executors.db.RunStatistic
+#          - reprobench.core.sysinfo.RunNode
+#        output: statistics/raw.csv
+#    - module: reprobench.statistics.tables.RunSummaryTable
+#      config:
+#        output: statistics/summary.csv
+#    - module: reprobench.statistics.plots.CactusPlot
+#      config:
+#        measure: wall_time
+#        output: statistics/cactus.ipynb
+
+tasks:
+  track1_full:
+    type: file
+#    path: /projects/p_mcc2020/track1/benchmarks/
+    path: /mnt/hosts/cobra-submit/mnt/vg01/lv01/home/cpriesne/instances/
+    extract_archives: true
+    patterns: |
+      **/track1_003.cnf
+      !**/*.processed
+  dummy_track:
+    type: file # this is not used at all, but there is no 'folder' type, so I use a singular dummy file instead.
+    path: /mnt/hosts/cobra-submit/mnt/vg01/lv01/home/cpriesne/instances/smac_train/
+    patterns: |
+      **/track1_151_78.cnf
+#      **/track1_005.cnf
+  extracted_instances: 
+    type: file
+    path: /mnt/hosts/cobra-submit/mnt/vg01/lv01/home/cpriesne/instances/extracted/
+    patterns: |
+      **/track1_*
+  train_instances: 
+    type: file
+    path: /mnt/hosts/cobra-submit/mnt/vg01/lv01/home/cpriesne/instances/smac_train/
+    patterns: |
+      **/*.cnf
+  test1_instances: 
+    type: file
+    path: /mnt/hosts/cobra-submit/mnt/vg01/lv01/home/cpriesne/instances/smac_test1/
+    patterns: |
+      **/*.cnf
+  test2_instances: 
+    type: file
+    path: /mnt/hosts/cobra-submit/mnt/vg01/lv01/home/cpriesne/instances/smac_test2/
+    patterns: |
+      **/*.cnf
+
+tools:
+#  mc2021_precomp:
+#    module: experiment.mc2021.executor.PrefExec
+#    parameters:
+#        bash:
+#          exec_tmpdir: "/run/shm/runsolver_mc2021_track1_{solver}_{filename}_{run}/"
+#          #not implemented
+#          delete_tmp: True
+#          cmd: "/mnt/hosts/cobra-submit/mnt/vg01/lv01/home/cpriesne/reprobench/experiment/mc2021/0-mc2020/track1/{solver}/{solver}_wrapper.sh --tmpdir={tmpdir} --origfile={ofilename} --timeout={walllimit} --maxtmp={maxtmp} --maxrss={memlimit} --task=mc {filename}"
+#          env: "TMPDIR={tmpdir}"
+#          solver:
+#            - cril-d4
+#            - nus-ganak
+#            - nus-onlyapprox
+#            - rice-addmc
+#            - ucla-c2d-bpe2
+#            - ucla-minic2d
+#            - ucla-minic2d-bpe
+#            - ucla-sdd-bpe
+  mc2022_smac:
+    module: experiment.mc2021.executor.PrefExec
+    parameters:
+        bash: 
+          exec_tmpdir: "/run/shm/runsolver_mc2021_track1_smac_{solver}_{filename}_{run}/"
+          #not implemented
+          delete_tmp: True
+          cmd: "/mnt/hosts/cobra-submit/mnt/vg01/lv01/home/cpriesne/reprobench/experiment/mc2021/0-mc2020/track1/smac/smac_wrapper.sh --tmpdir={tmpdir} --origfile={ofilename} --timeout={walllimit} --maxtmp={maxtmp} --maxrss={memlimit} --algo={solver} --instances=/mnt/hosts/cobra-submit/mnt/vg01/lv01/home/cpriesne/instances/smac_train --pfile=/mnt/hosts/cobra-submit/mnt/vg01/lv01/home/cpriesne/master_project/new_{solver}_params.json --cutoff=900 --runcount=2000"
+          env: "TMPDIR={tmpdir}"
+          solver:
+#              - d4
+              - dpmc
+#              - sharpsat_td
+#              - ganak
+#              - miniC2D
+#              - sharpsat_marcthurley
+
+  mc2022_benchmark: 
+    module: experiment.mc2021.executor.PrefExec
+    parameters:
+        bash: 
+          exec_tmpdir: "/run/shm/runsolver_mc2021_track1_{solver}_{filename}_{run}/"
+          #not implemented
+          delete_tmp: True
+          cmd: "/mnt/hosts/cobra-submit/mnt/vg01/lv01/home/cpriesne/reprobench/experiment/mc2021/0-mc2020/track1/{solver}/{solver}_wrapper.sh --tmpdir={tmpdir} --origfile={ofilename} --timeout={walllimit} --maxtmp={maxtmp} --maxrss={memlimit} --algo={solver} --instance={filename} --pfile=/mnt/hosts/cobra-submit/mnt/vg01/lv01/home/cpriesne/master_project/default_algorithm_params.json"
+          env: "TMPDIR={tmpdir}"
+          solver:
+#               - nestHDB
+#              - d4
+#              - dpmc
+#              - sharpsat_td
+              - ganak
+#              - miniC2D
+#              - sharpsat_marcthurley
+
+#  mc2022_nesthdb:
+#    module: experiment.mc2021.executor.PrefExec
+#    parameters:
+#        bash:
+#          exec_tmpdir: "/run/shm/runsolver_mc2021_track1_smac_{solver}_{filename}_{run}/"
+#          #not implemented
+#          delete_tmp: True
+#          cmd: "/mnt/hosts/cobra-submit/mnt/vg01/lv01/home/cpriesne/reprobench/experiment/mc2021/0-mc2020/track1/{solver}/{solver}_wrapper.sh --tmpdir={tmpdir} --origfile={ofilename} --timeout={walllimit} --maxtmp={maxtmp} --maxrss={memlimit} --algo={solver} --instance={filename} --pfile=/mnt/hosts/cobra-submit/mnt/vg01/lv01/home/cpriesne/master_project/algorithm_params.json"
+#          env: "TMPDIR={tmpdir}"
+#          solver:
+#              - d4
+
+
+
+runs:
+#  mc2021_precomp:
+#    all:
+      # - track1_full
+#  mc2022_smac:
+#    all:
+#      - dummy_track
+  mc2022_benchmark:
+    all:
+     - test1_instances
+#      - extracted_instances
+

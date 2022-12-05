@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#/home/cpriesne/reprobench/run_worker_env.sh
 import argparse
 
 import yaml
@@ -9,7 +9,7 @@ parser = argparse.ArgumentParser(description='%(prog)s -r remoteid:port -i clust
 parser.add_argument('-i', '--cluster_job_id', dest='cluster_job_id', action='store',
                     default=-1, help='Set cluster_job_id [default=-1]')
 parser.add_argument('-r', '--remote-server', dest='remote_server', action='store',
-                    default="127.0.0.1:31313",
+                    default="10.0.0.11:31513",
                     help='Set remote server [default=127.0.0.1:31313]')
 args = parser.parse_args()
 
