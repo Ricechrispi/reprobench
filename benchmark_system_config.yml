@@ -4,12 +4,12 @@
 #default_exp_config: "./experiment/thp/0thp_exp_all.yml"
 #default_exp_config: "./experiment/satarch/satarch_exp_all.yml"
 #default_exp_config: "./experiment/thp/0thp_exp_mc_preprocess.yml"
-default_exp_config: "./experiment/mc2021/mc2022.yml"
+default_exp_config: "./experiment/mc2022/mc2022.yml"
 #TODO: move to benchmark file
 repeat: 1
 #TODO: add_loglevel
 output: "output"
-reserve_hosts: 8
+reserve_hosts: 1
 reserve_cores: 24
 #https://doc.zih.tu-dresden.de/hpc-wiki/pub/Compendium/HardwareTaurus/i4000.png
 billing: p_gpusat

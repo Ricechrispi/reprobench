@@ -2,8 +2,8 @@ title: MC2022_NESTHDB
 description: Improving nesthdb with AL and ML
 
 limits:
-#  time: 500 # s
-  time: 900 # PRO INSTANCE, 3600s==1h
+  time: 300 # s
+#  time: 900 # PRO INSTANCE, 3600s==1h
 #  time: 43200 #12h, for SMAC
   memory: 245000 # mb PRO INSTANCE, UP TO 250GB, little less to be sure
   tmpdisk: 8048 # GB NOT ENFORCED
@@ -103,30 +103,30 @@ tools:
 #            - ucla-minic2d-bpe
 #            - ucla-sdd-bpe
   mc2022_smac:
-    module: experiment.mc2021.executor.PrefExec
+    module: experiment.mc2022.executor.PrefExec
     parameters:
         bash: 
-          exec_tmpdir: "/run/shm/runsolver_mc2021_track1_smac_{solver}_{filename}_{run}/"
+          exec_tmpdir: "/run/shm/runsolver_mc2022_track1_smac_{solver}_{filename}_{run}/"
           #not implemented
           delete_tmp: True
-          cmd: "/mnt/hosts/cobra-submit/mnt/vg01/lv01/home/cpriesne/reprobench/experiment/mc2021/0-mc2020/track1/smac/smac_wrapper.sh --tmpdir={tmpdir} --origfile={ofilename} --timeout={walllimit} --maxtmp={maxtmp} --maxrss={memlimit} --algo={solver} --instances=/mnt/hosts/cobra-submit/mnt/vg01/lv01/home/cpriesne/instances/smac_train --pfile=/mnt/hosts/cobra-submit/mnt/vg01/lv01/home/cpriesne/master_project/new_{solver}_params.json --cutoff=900 --runcount=2000"
+          cmd: "/mnt/hosts/cobra-submit/mnt/vg01/lv01/home/cpriesne/reprobench/experiment/mc2022/0-mc2022/track1/smac/smac_wrapper.sh --tmpdir={tmpdir} --origfile={ofilename} --timeout={walllimit} --maxtmp={maxtmp} --maxrss={memlimit} --algo={solver} --instances=/mnt/hosts/cobra-submit/mnt/vg01/lv01/home/cpriesne/instances/smac_train --pfile=/mnt/hosts/cobra-submit/mnt/vg01/lv01/home/cpriesne/master_project/new_{solver}_params.json --cutoff=900 --runcount=2000"
           env: "TMPDIR={tmpdir}"
           solver:
 #              - d4
-              - dpmc
+#              - dpmc
 #              - sharpsat_td
-#              - ganak
+              - ganak
 #              - miniC2D
 #              - sharpsat_marcthurley
 
   mc2022_benchmark: 
-    module: experiment.mc2021.executor.PrefExec
+    module: experiment.mc2022.executor.PrefExec
     parameters:
         bash: 
-          exec_tmpdir: "/run/shm/runsolver_mc2021_track1_{solver}_{filename}_{run}/"
+          exec_tmpdir: "/run/shm/runsolver_mc2022_track1_{solver}_{filename}_{run}/"
           #not implemented
           delete_tmp: True
-          cmd: "/mnt/hosts/cobra-submit/mnt/vg01/lv01/home/cpriesne/reprobench/experiment/mc2021/0-mc2020/track1/{solver}/{solver}_wrapper.sh --tmpdir={tmpdir} --origfile={ofilename} --timeout={walllimit} --maxtmp={maxtmp} --maxrss={memlimit} --algo={solver} --instance={filename} --pfile=/mnt/hosts/cobra-submit/mnt/vg01/lv01/home/cpriesne/master_project/default_algorithm_params.json"
+          cmd: "/mnt/hosts/cobra-submit/mnt/vg01/lv01/home/cpriesne/reprobench/experiment/mc2022/0-mc2022/track1/{solver}/{solver}_wrapper.sh --tmpdir={tmpdir} --origfile={ofilename} --timeout={walllimit} --maxtmp={maxtmp} --maxrss={memlimit} --algo={solver} --instance={filename} --pfile=/mnt/hosts/cobra-submit/mnt/vg01/lv01/home/cpriesne/master_project/default_algorithm_params.json"
           env: "TMPDIR={tmpdir}"
           solver:
 #               - nestHDB
@@ -138,13 +138,13 @@ tools:
 #              - sharpsat_marcthurley
 
 #  mc2022_nesthdb:
-#    module: experiment.mc2021.executor.PrefExec
+#    module: experiment.mc2022.executor.PrefExec
 #    parameters:
 #        bash:
-#          exec_tmpdir: "/run/shm/runsolver_mc2021_track1_smac_{solver}_{filename}_{run}/"
+#          exec_tmpdir: "/run/shm/runsolver_mc2022_track1_smac_{solver}_{filename}_{run}/"
 #          #not implemented
 #          delete_tmp: True
-#          cmd: "/mnt/hosts/cobra-submit/mnt/vg01/lv01/home/cpriesne/reprobench/experiment/mc2021/0-mc2020/track1/{solver}/{solver}_wrapper.sh --tmpdir={tmpdir} --origfile={ofilename} --timeout={walllimit} --maxtmp={maxtmp} --maxrss={memlimit} --algo={solver} --instance={filename} --pfile=/mnt/hosts/cobra-submit/mnt/vg01/lv01/home/cpriesne/master_project/algorithm_params.json"
+#          cmd: "/mnt/hosts/cobra-submit/mnt/vg01/lv01/home/cpriesne/reprobench/experiment/mc2022/0-mc2022/track1/{solver}/{solver}_wrapper.sh --tmpdir={tmpdir} --origfile={ofilename} --timeout={walllimit} --maxtmp={maxtmp} --maxrss={memlimit} --algo={solver} --instance={filename} --pfile=/mnt/hosts/cobra-submit/mnt/vg01/lv01/home/cpriesne/master_project/algorithm_params.json"
 #          env: "TMPDIR={tmpdir}"
 #          solver:
 #              - d4
@@ -155,11 +155,11 @@ runs:
 #  mc2021_precomp:
 #    all:
       # - track1_full
-#  mc2022_smac:
-#    all:
-#      - dummy_track
-  mc2022_benchmark:
+  mc2022_smac:
     all:
-     - test1_instances
+      - dummy_track
+#  mc2022_benchmark:
+#    all:
+#     - test1_instances
 #      - extracted_instances
 
