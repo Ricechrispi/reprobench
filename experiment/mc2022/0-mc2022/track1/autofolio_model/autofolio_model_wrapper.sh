@@ -31,12 +31,12 @@ case $i in
     ALGO="${i#*=}"
     shift
     ;;
-    -i=*|--instance=*)
-    INSTANCE="${i#*=}"
+    -p=|--pfile=*)
+    PFILE="${i#*=}"
     shift
     ;;
-    -s=|--subsolver=*)
-    SUBSOLVER="${i#*=}"
+    -i=*|--instance=*)
+    INSTANCE="${i#*=}"
     shift
     ;;
     --default)
@@ -62,8 +62,8 @@ echo "c o ENV PMAXTMP = ${MAXTMP}"
 echo "c o ENV MAXRSS = ${MAXRSS}"
 echo "c o ENV TIMEOUT = ${TIMEOUT}"
 echo "c o ENV ALGO = ${ALGO}"
+echo "c o ENV PFILE = ${PFILE}"
 echo "c o ENV INSTANCE = ${INSTANCE}"
-echo "c o ENV SUBSOLVER = ${SUBSOLVER}"
 
 echo "c o ================= SET PRIM INTRT HANDLING ==============="
 function interrupted(){
@@ -141,7 +141,7 @@ conda activate "$conda_env_name"
 
 
 echo "c o ================= Running Solver ==============="
-cmd="python benchmark_runner.py $ALGO -instance $INSTANCE -subsolver $SUBSOLVER"
+cmd="python benchmark_runner.py $ALGO -instance $INSTANCE -param_file $PFILE"
 myenv="TMPDIR=$TMPDIR"
 echo "c o SOLVERCMD=$cmd"
 
@@ -152,11 +152,6 @@ exit_code=$?
 echo "c solver_wrapper: ==============================="
 echo "c solver_wrapper: Solver finished with exit code="$exit_code
 echo "c f RET="$exit_code
-
-echo "c output of solver:"
-cat $tmpfile
-#ls -la /dev/shm
-#du -h /dev/shm
 
 #result=$(cat $tmpfile | grep "^s " | awk '{print $2}')
 #if [ $result -eq "0" ] ; then

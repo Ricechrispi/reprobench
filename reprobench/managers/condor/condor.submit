@@ -14,7 +14,7 @@ requirements = (machine != "cobra-submit.kr.tuwien.ac.at") && (machine != "cobra
 remove_kill_sig = 15
 kill_sig = 15
 #nice_user = True
-priority = 20
+priority = -20
 job_max_vacate_time = 60
 
 #=========================================================================
